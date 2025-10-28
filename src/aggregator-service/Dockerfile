@@ -10,8 +10,11 @@ RUN go mod download
 
 COPY [".", "."]
 
+RUN go install github.com/DataDog/orchestrion@v1.5.0 \
+    && orchestrion pin
+
 RUN go test ./... \
-    && go build -ldflags="-linkmode=external" -o aggregator-service
+    && go build -ldflags="-linkmode=external" -toolexec="orchestrion toolexec" -o aggregator-service
 
 FROM alpine:3.22.1@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1
 

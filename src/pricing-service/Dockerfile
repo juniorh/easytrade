@@ -14,7 +14,9 @@ COPY [".", "."]
 RUN go test ./... \
     && go install github.com/swaggo/swag/cmd/swag@v1.16.3 \
     && swag init \
-    && go build -ldflags '-linkmode=external' -o pricing-service
+    && go install github.com/DataDog/orchestrion@v1.5.0 \
+    && orchestrion pin 
+RUN go build -ldflags '-linkmode=external'  -toolexec="orchestrion toolexec" -o pricing-service
 
 FROM alpine:3.22.1@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1
 

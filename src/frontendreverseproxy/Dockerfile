@@ -4,6 +4,10 @@ RUN rm /etc/nginx/conf.d/default.conf
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
+COPY dd-nginx-module.sh /opt/dd-nginx-module.sh
+RUN apk update --no-cache && apk add curl jq
+RUN /opt/dd-nginx-module.sh
+
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]

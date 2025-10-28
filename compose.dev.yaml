@@ -35,6 +35,12 @@ x-datakit-dotnet-vars: &datakit-dotnet-vars
 x-datakit-golang-vars: &datakit-golang-vars
   GOFLAGS="${GOFLAGS} '-toolexec=orchestrion toolexec'"
 
+x-datakit-java-vars: &datakit-java-vars
+  JAVA_TOOL_OPTIONS: "-javaagent:dd-java-agent.jar"
+
+x-datakit-nodejs-vars: &datakit-nodejs-vars
+  NODE_OPTIONS: "-r dd-trace/init"
+
 services:
   db:
     <<: *default-service
@@ -51,6 +57,10 @@ services:
       - db
     environment:
       MSSQL_CONNECTIONSTRING: *java-connection-string
+      <<:
+        - *datakit-vars
+        - *datakit-java-vars
+      DD_SERVICE: contentcreator
 
   manager:
     <<: *default-service
@@ -62,7 +72,9 @@ services:
     environment:
       MSSQL_CONNECTIONSTRING: *dotnet-connection-string
       PROXY_PREFIX: manager
-      <<: [*datakit-vars, *datakit-dotnet-vars]
+      <<:
+        - *datakit-vars
+        - *datakit-dotnet-vars
       DD_SERVICE: manager
 
   pricing-service:
@@ -191,6 +203,7 @@ services:
       <<:
         - *feature-flag-service-env 
         - *datakit-vars
+        - *datakit-nodejs-vars
       DD_SERVICE: offerservice
       LOGIN_SERVICE_PORT: 8080
       LOGIN_SERVICE_BASE_URL: loginservice
@@ -207,7 +220,9 @@ services:
     environment:
       MANAGER_HOSTANDPORT: manager:8080
       PROXY_PREFIX: accountservice
-      <<: *datakit-vars
+      <<:
+        - *datakit-vars
+        - *datakit-java-vars
       DD_SERVICE: accountservice
 
   engine:
@@ -220,7 +235,9 @@ services:
     environment:
       BROKER_HOSTANDPORT: broker-service:8080
       PROXY_PREFIX: engine
-      <<: *datakit-vars
+      <<:
+        - *datakit-vars
+        - *datakit-java-vars
       DD_SERVICE: engine
 
   credit-card-order-service:
@@ -238,6 +255,7 @@ services:
       <<:
         - *feature-flag-service-env
         - *datakit-vars
+        - *datakit-java-vars
       DD_SERVICE: credit-card-order-service
       WORK_DELAY: 30
       WORK_RATE: 30
@@ -252,6 +270,7 @@ services:
       <<:
         - *feature-flag-service-env
         - *datakit-vars
+        - *datakit-java-vars
       DD_SERVICE: third-party-service
       PROXY_PREFIX: third-party-service
       CREDIT_CARD_ORDER_SERVICE_HOSTANDPORT: credit-card-order-service:8080
@@ -269,7 +288,9 @@ services:
       PROXY_PREFIX: feature-flag-service
       # ENABLE_MODIFY: "false"
       # ENABLE_FRONTEND_MODIFY: "false"
-      <<: *datakit-vars
+      <<:
+        - *datakit-vars
+        - *datakit-java-vars
       DD_SERVICE: feature-flag-service
 
   aggregator-service:

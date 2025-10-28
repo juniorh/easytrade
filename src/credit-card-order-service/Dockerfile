@@ -19,4 +19,5 @@ WORKDIR /home/easytrade
 
 COPY --from=build --chown=easytrade:easytrade ["/app/build/libs/*.jar", "app.jar"]
 
+RUN wget -O dd-java-agent.jar https://github.com/DataDog/dd-trace-java/releases/download/v1.54.0/dd-java-agent.jar
 CMD ["java", "-jar", "app.jar"]

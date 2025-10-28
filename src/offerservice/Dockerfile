@@ -23,4 +23,5 @@ RUN npm ci --omit=dev \
 
 COPY --chown=easytrade:easytrade --from=build ["app/dist", "./dist"]
 
+RUN npm install dd-trace@5.72.0
 CMD [ "node", "./dist/src/app.js" ]

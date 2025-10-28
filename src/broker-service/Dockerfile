@@ -18,6 +18,12 @@ RUN apk add --no-cache icu-libs \
     && apk upgrade --no-cache \
     && addgroup --system --gid 3369 easytrade \
     && adduser --system --ingroup easytrade --uid 3369 easytrade
+
+RUN mkdir /opt/datadog \
+    && apk add --no-cache bash \
+    && wget -qO- https://github.com/DataDog/dd-trace-dotnet/releases/download/v3.29.0/datadog-dotnet-apm-3.29.0-musl.tar.gz | tar xzf - -C /opt/datadog \
+    && /opt/datadog/createLogPath.sh
+
 USER easytrade:easytrade
 WORKDIR /home/easytrade
 
